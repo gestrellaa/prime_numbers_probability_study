@@ -3,7 +3,7 @@ Eduardo Matte Zanardo dos Santos
 
 # Introduction
 
-The intention of this article analyses the efficiency of algorithms that answear the following questions:<br>
+The intention of this article is to analyse the efficiency of algorithms that answear the following questions:<br>
 
 1. "Given a number N, what is the probability of a prime number to be randomly chosen in the interval [1,N]?"<br>
 2. "How does the function of this probability depending on N look like?"<br>
@@ -14,9 +14,9 @@ In order to do that, the trivial solution is implemented as well as the optmized
 
 ### Algorithm
 
-The idea of the trivial solution is to iterate over all numbers from 2 to N and for each of them, check if it is prime. So, at the end of all iterations, the count of prime numbers divided by N will return the probability of a randomly chosen number in this range to be prime.
+The idea of the trivial solution is to iterate over all numbers from 2 to N and, for each of them, check whether it is prime. If so, a counter variable is incremented. So, at the end of all iterations, the division of this counter by N will return the probability of a randomly chosen number in this range to be prime.
 
-To find out whether a number X is prime, X shall be divided by all numbers from 2 until its integer half or until the rest of the division is zero. It is not necessary to divide X by a number greater than its half because the greatest divisor of a number, without considering the number itself, is its half.
+To find out whether a number X is prime, X shall be divided by all numbers from 2 until its integer half or until the rest of the division is zero. It is not necessary to divide X by any number greater than its half because the greatest divisor of a number, without considering the number itself, is its half.
 
 ### Pseudocode
 
@@ -47,11 +47,13 @@ This algorithm iterates over all numbers in the interval between 1 and N and, fo
 
 ### Algorithm
 
-To understand the optimized algorithm, it is necessary to keep in mind the principle that, in a multiplication, the order of the factors does not change the product. The idea of this algorithm consists in, instead of counting how many numbers between 1 and N are prime, saving all the non prime numbers between 1 and N, and then divide N - count of non prime numbers by N, using the complementary logic.
+To understand the optimized algorithm, it is necessary to keep in mind the principle that, in a multiplication, the order of the factors does not change the product. The idea of this algorithm consists in, instead of counting how many numbers between 1 and N are prime, saving all the non prime numbers between 1 and N, and then divide N minus the count of non prime numbers by N, using the complementary logic.
 
-In order to do save all this non prime numbers, it is necessary to iterate over all the numbers between 2 and the integer square root of N, that will be called by i, and, for each i, it is made a new iteration over all the numbers between i and the integer division of N by i. The products of the multiplication of i and each of these numbers are added to the non prime list, which is initialized with only the number 1, if and only if this product is not in the list yet.
+In order to save all this non prime numbers, the algorithm iterates over all the numbers between 2 and the integer square root of N, that will be called by i, and, for each i, it is made a new iteration over all the numbers between i and the integer division of N by i. The products of the multiplication of i and each of these numbers are added to the non prime numbers list, which is initialized with only the number 1, if and only if this product is not in the list yet.
 
-However, it is very important to understand why it is possible to start the second iteration by the number itself, eg: 4\*4, 4\*5, 4\*6 and so on. As mentioned in the first paragraph, the order of the factors does not change the product. Because of that, using the same example, it is not necessary to do 4\*2 and 4\*3, because 2\*4 and 3\*4 were already calculated in the iterations of 2 and 3. For the same reason, the first iteration can be stopped at the integer square root of N because, if we are starting the second iteration by the same current number of first iteration, the greatest number that can be multiplied by itself without exceeding N is the integer square root of N.
+However, it is very important to understand why it is possible to start the second iteration by the number itself, eg: 4\*4, 4\*5, 4\*6 and so on. As mentioned in the first paragraph, the order of the factors does not change the product. Because of that, using the same example, it is not necessary to do 4\*2 and 4\*3, because 2\*4 and 3\*4 were already calculated in the iterations of 2 and 3. For the same reason, the first iteration can be stopped at the integer square root of N because, if the second iteration is started by the same current number of first iteration, the greatest number that can be multiplied by itself without exceeding N is the integer square root of N.
+
+After applying all these multiplications and saving them in a list, this list must contain all the non prime numbers between 1 and N, as all combinations of multiplications that return a number in this interval were considered. Because of that, it is reasonable to conclude that the counting of non prime numbers can be defined as N minus the length of the list mentioned and the probability is this subtraction divided by N.
 
 ### Pseudocode
 
@@ -60,7 +62,7 @@ The whole algorithm can be written as following:
 ```text
     non_primes <- [1]
     for n in [2, integer(√N)]:
-        for aux in [n, N/n]:
+        for aux in [n, N//n]:
             product <- n * aux
             if product not in non_primes:
                 non_primes <- non_primes + [product]
@@ -70,12 +72,18 @@ The whole algorithm can be written as following:
 
 ### Complexity Analysis
 
-This algorithm iterates over all numbers between 2 and the integer square root of N and, for each of these numbers, called by auxiliar for better understanding, iterates over all numbers between auxiliar and the integer division of N by auxiliar. In other words, it can be described as O((N√N)/aux - aux√N), which can be generalized for O(N√N).
+This algorithm iterates over all numbers between 2 and the integer square root of N and, for each of these numbers, called by auxiliar for better understanding, iterates over all numbers between auxiliar and the integer division of N by auxiliar. In other words, it can be described as O((N√N)/aux - aux√N), which can be generalized for O(n√n).
 
 # Probabilities Function
 
-In order to obtain the shape of the probabilities function, all the results of the optimized algorithm from N going from 2 untill 5000 and plotted in a line graph. It is show in the file results.png.
+In order to obtain the shape of the probabilities function, all the results of the optimized algorithm from N going from 2 untill 5000 and plotted in a line graph. It is show in the file `results.png`.
+
+# Results
+
+To see in real world the difference between these two algorithms, both of them was executed for all numbers between 2 and 5000 and the time each of them took to run was saved in a list. In the end of the experiment, while the optimized algorithm was executing instantly, the trivial one was taking 0.02 seconds. The greatest number chosen was 5000 because, after this limit, the trivial algorithm was taking so much time and the experiment would be much slower. All the graphs can be found in the file `results.png`.
+
+All of the experiments were executed in an Intel I7 processor.
 
 # Conclusion
 
-This study has implemented successfully a more scalable algorithm for the problem of the probability of a random number chosen between 1 and a given N to be prime. Besides that, the code provides the shape of the equation of these probabilities in function of N. All the results are shown in the file results.png.
+This study has implemented successfully a more scalable algorithm for the problem of the probability of a random number chosen between 1 and a given N to be prime. Besides that, the code succeds in providing the shape of the equation of these probabilities in function of N.
